@@ -1,5 +1,7 @@
 package com.springboot.aws.web;
 
+import com.springboot.aws.domain.user.Role;
+import com.springboot.aws.domain.user.User;
 import com.springboot.aws.web.dto.HelloResponseDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
