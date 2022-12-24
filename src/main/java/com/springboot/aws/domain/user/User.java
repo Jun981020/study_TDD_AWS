@@ -39,6 +39,13 @@ public class User extends BaseTimeEntity {
     public String getRoleKey(){
         return this.role.getKey();
     }
+    public User createUser(String name,String email,String picture,Role role){
+        this.name = name;
+        this.email = email;
+        this.picture = picture;
+        this.role = role;
+        return this;
+    }
 
 
 
