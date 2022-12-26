@@ -4,15 +4,18 @@ import com.springboot.aws.domain.user.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig{
+
+    private final CorsConfig corsConfig;
 
     private final CustomOAuth2UserService customOAuth2UserService;
 //    protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -39,9 +42,11 @@ public class SecurityConfig{
                 .csrf().disable()
                 .headers().frameOptions().disable()
                 .and()
+                .apply(new MyCustomDsl())
+                .and()
                 .authorizeRequests()
                 .antMatchers("/","/css/**","/images/**","/js/**","/h2-console/**").permitAll()
-                .antMatchers("/api/v1/**").hasRole(Role.USER.name())
+                .antMatchers("/api/v1/**").hasAuthority(Role.USER.name())
                 .anyRequest().authenticated()
                 .and()
                 .logout()
@@ -50,6 +55,15 @@ public class SecurityConfig{
                 .oauth2Login()
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService).and().and().build();
+    }
+    public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl,HttpSecurity> {
+        @Override
+        public void configure(HttpSecurity http) throws Exception {
+            AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+            http
+                    .addFilter(corsConfig.corsFilter());
+
+        }
     }
 
 }

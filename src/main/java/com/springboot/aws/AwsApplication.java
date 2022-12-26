@@ -12,7 +12,9 @@ public class AwsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AwsApplication.class, args);
+		System.out.println("Role.USER.name() = " + Role.USER.name());
 	}
 
 
 }
+
