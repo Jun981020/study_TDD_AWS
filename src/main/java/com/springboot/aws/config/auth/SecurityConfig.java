@@ -15,8 +15,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig{
 
-    private final CorsConfig corsConfig;
-
     private final CustomOAuth2UserService customOAuth2UserService;
 //    protected void configure(HttpSecurity httpSecurity) throws Exception {
 //        httpSecurity
@@ -42,28 +40,16 @@ public class SecurityConfig{
                 .csrf().disable()
                 .headers().frameOptions().disable()
                 .and()
-                .apply(new MyCustomDsl())
+                    .authorizeRequests()
+                    .antMatchers("/","/css/**","/images/**","/js/**","/h2-console/**").permitAll()
+                    .antMatchers("/api/v1/**").hasRole(Role.USER.name())
+                    .anyRequest().authenticated()
                 .and()
-                .authorizeRequests()
-                .antMatchers("/","/css/**","/images/**","/js/**","/h2-console/**").permitAll()
-                .antMatchers("/api/v1/**").hasAuthority(Role.USER.name())
-                .anyRequest().authenticated()
+                    .logout()
+                        .logoutSuccessUrl("/")
                 .and()
-                .logout()
-                .logoutSuccessUrl("/")
-                .and()
-                .oauth2Login()
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService).and().and().build();
+                  .oauth2Login()
+                        .userInfoEndpoint()
+                            .userService(customOAuth2UserService).and().and().build();
     }
-    public class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl,HttpSecurity> {
-        @Override
-        public void configure(HttpSecurity http) throws Exception {
-            AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-            http
-                    .addFilter(corsConfig.corsFilter());
-
-        }
-    }
-
 }
