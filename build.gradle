@@ -4,6 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
+
 group = 'com.springboot'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -37,7 +38,6 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-jar {
-	enabled = false
+tasks.named('jar') {
+	enabled=false
 }
